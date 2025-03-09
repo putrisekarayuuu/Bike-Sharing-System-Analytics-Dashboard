@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Dicoding Collection Dashboard ✨
 
 ## Setup Environment - Anaconda
@@ -23,4 +22,3 @@ streamlit run dashboard.py
 ```
 =======
 **Streamlit Dashboard Link:** https://putrisekarayu-dicoding-bikesharingdashboard.streamlit.app/
->>>>>>> 2086885d7807c0e799004227711fcfb25801abb9
