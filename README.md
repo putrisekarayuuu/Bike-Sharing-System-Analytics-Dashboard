@@ -12,4 +12,4 @@ pip install -r requirements.txt
 streamlit run dashboard/dashboard.py
 ```
 =======
-**Streamlit Dashboard Link:** https://putrisekarayu-dicoding-bikesharingdashboard.streamlit.app/
+**Streamlit Dashboard Link:** https://bike-sharing-system-analytics-dashboard-putrisekarayuuu.streamlit.app/
