@@ -1,1 +1,1 @@
-https://putrisekarayu-dicoding-bikesharingdashboard.streamlit.app/
+https://bike-sharing-system-analytics-dashboard-putrisekarayuuu.streamlit.app/
