@@ -9,8 +9,8 @@ st.set_page_config(page_title="Analisis Penyewaan Sepeda", layout="wide")
 # Load Dataset
 @st.cache_data
 def load_data():
-    df_hour = pd.read_csv("../data/hour.csv")  # Dataset per jam
-    df_day = pd.read_csv("../data/day.csv")    # Dataset per hari
+    df_hour = pd.read_csv("data/hour.csv")  # Dataset per jam
+    df_day = pd.read_csv("data/day.csv")    # Dataset per hari
     return df_hour, df_day
 
 df_hour, df_day = load_data()
