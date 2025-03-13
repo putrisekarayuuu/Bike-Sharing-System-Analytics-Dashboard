@@ -9,14 +9,15 @@ st.set_page_config(page_title="Analisis Penyewaan Sepeda", layout="wide")
 # Load Dataset
 @st.cache_data
 def load_data():
-    # Jika dijalankan dari streamlit atau github
+
+    # Local
+    # df_hour = pd.read_csv("../data/hour.csv")  # Dataset per jam
+    # df_day = pd.read_csv("../data/day.csv")    # Dataset per hari
+
+    # Apabila relative path tidak berjalan
     df_hour = pd.read_csv("data/hour.csv")  # Dataset per jam
     df_day = pd.read_csv("data/day.csv")    # Dataset per hari
 
-    # Jika dijalankan di local
-    # df_hour = pd.read_csv("../data/hour.csv")  # Dataset per jam
-    # df_day = pd.read_csv("../data/day.csv")    # Dataset per hari
-    
     return df_hour, df_day
 
 df_hour, df_day = load_data()
@@ -64,8 +65,10 @@ st.sidebar.markdown("<h1 style='color: darkblue; font-weight: bold;'>Dashboard P
 st.sidebar.markdown("##### Made by: Putri Sekar Ayu")
 
 if 'menu' not in st.session_state:
-    st.session_state.menu = "penyewaan"
+    st.session_state.menu = "interaktif"
 
+if st.sidebar.button("📊 Dashboard Interaktif"):
+    st.session_state.menu = "interaktif"
 if st.sidebar.button("📊 Statistik Penyewaan Sepeda"):
     st.session_state.menu = "penyewaan"
 if st.sidebar.button("👥 Statistik Pengguna"):
@@ -74,8 +77,56 @@ if st.sidebar.button("☀️ Analisis Cuaca"):
     st.session_state.menu = "cuaca"
 
 # Konten Halaman
+if st.session_state.menu == "interaktif":
+    st.title("Dashboard Penyewaan Sepeda")
+
+    fil1, fil2 = st.columns([1, 1])  # Atur lebar kolom agar seimbang
+
+    with fil1:
+        selected_dates = st.date_input(
+            "Pilih Rentang Tanggal",
+            [df_day['dteday'].min(), df_day['dteday'].max()],
+            min_value=df_day['dteday'].min(),
+            max_value=df_day['dteday'].max()
+        )
+
+    with fil2:
+        selected_season = st.multiselect(
+            "Pilih Musim",
+            df_day['season_label'].unique(),
+            default=df_day['season_label'].unique()
+        )
+
+
+    # Filter data berdasarkan input
+    filtered_df = df_day[
+        (df_day['dteday'] >= pd.Timestamp(selected_dates[0])) &
+        (df_day['dteday'] <= pd.Timestamp(selected_dates[1])) &
+        (df_day['season_label'].isin(selected_season))
+    ]
+
+    # Hitung rata-rata penyewaan per hari
+    grouped_df = filtered_df.groupby("weekday", observed=True)["cnt"].mean().reset_index()
+
+    # Urutkan sesuai urutan hari
+    ordered_days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
+    grouped_df["weekday"] = pd.Categorical(grouped_df["weekday"], categories=ordered_days, ordered=True)
+    grouped_df = grouped_df.sort_values("weekday")
+
+    # Tampilkan informasi rentang tanggal yang dipilih
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    st.write(f"**Data dari {selected_dates[0]} hingga {selected_dates[1]}**")
+
+    # Visualisasi dengan bar plot
+    fig, ax = plt.subplots(figsize=(10, 5))
+    sns.barplot(data=grouped_df, x="weekday", y="cnt", ax=ax, color="skyblue")
+    ax.set_title("Rata-rata Penyewaan Sepeda per Hari dalam Seminggu")
+    ax.set_ylabel("Jumlah Penyewaan")
+    ax.set_xlabel("")
+    st.pyplot(fig)
+
 if st.session_state.menu == "penyewaan":
-    
     #1. Visualisasi rata-rata penyewa harian
     st.subheader("📊 Rata-rata Penyewaan Sepeda per Hari")
 
@@ -334,6 +385,3 @@ elif st.session_state.menu == "cuaca":
         st.markdown("""
         - Hari dimana para penyewa melakukan penyewaan sepeda ini banyak dilakukan di hari dengan suhu sedang, yang dalam rentang normalisasi berada pada angka 0.366-0.732 atau pada rentang biasa di angka 15-30 derajat
         """)
-
-
-
